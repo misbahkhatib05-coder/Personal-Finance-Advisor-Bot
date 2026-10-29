@@ -1,1 +1,1 @@
-# Personal-Finance-Advisor-Bot
+# AI-Powered Personal Finance Advisor Bot
