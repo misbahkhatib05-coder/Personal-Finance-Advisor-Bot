@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}Budget Overview{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Budget Plan</h1>
+    <p class="page-subtitle">Your AI-powered budget for {{ month_name }} {{ year }}</p>
+</div>
+
+<div class="page-body">
+    <div class="action-bar">
+        <div></div>
+        <a href="{{ url_for('budget_generate') }}" class="btn btn-primary" id="generate-budget-btn">🤖 Generate New Budget</a>
+    </div>
+
+    {% if budget %}
+    <!-- Budget Summary Cards -->
+    <div class="stats-grid">
+        <div class="stat-card income">
+            <div class="stat-card-icon">💵</div>
+            <div class="stat-card-value">${{ "%.2f"|format(budget.total_income) }}</div>
+            <div class="stat-card-label">Total Income</div>
+        </div>
+        <div class="stat-card budget">
+            <div class="stat-card-icon">🎯</div>
+            <div class="stat-card-value">${{ "%.2f"|format(budget.total_budget) }}</div>
+            <div class="stat-card-label">Budget Allocated</div>
+        </div>
+        <div class="stat-card savings">
+            <div class="stat-card-icon">💰</div>
+            <div class="stat-card-value">${{ "%.2f"|format(budget.savings_target) }}</div>
+            <div class="stat-card-label">Savings Target</div>
+        </div>
+    </div>
+
+    <!-- Category Budget Breakdown -->
+    <div class="card mb-6">
+        <div class="card-header">
+            <h3 class="card-title">Budget by Category</h3>
+        </div>
+
+        {% for cat_name, allocated in allocations.items() %}
+        {% set spent = category_spending.get(cat_name, 0) %}
+        {% set pct = (spent / allocated * 100) if allocated > 0 else 0 %}
+        <div class="budget-category-row">
+            <div class="budget-category-info">
+                <div class="budget-category-name">{{ cat_name }}</div>
+                <div class="budget-category-amounts">
+                    Spent: ${{ "%.2f"|format(spent) }} / Allocated: ${{ "%.2f"|format(allocated) }}
+                </div>
+            </div>
+            <div class="budget-category-bar">
+                <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                    <span class="text-xs {% if pct > 100 %}amount-negative{% else %}text-muted{% endif %}">
+                        {{ "%.0f"|format(pct) }}%
+                    </span>
+                    {% if pct > 100 %}
+                    <span class="badge badge-danger" style="font-size:0.65rem;">Over Budget</span>
+                    {% endif %}
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill {% if pct > 100 %}over-budget{% endif %}"
+                         style="width: {{ [pct, 100] | min }}%"></div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- AI Recommendations -->
+    {% if budget.ai_recommendations %}
+    <div class="card mb-6">
+        <div class="card-header">
+            <h3 class="card-title">💡 AI Budget Recommendations</h3>
+        </div>
+        <div class="ai-response">{{ budget.ai_recommendations }}</div>
+    </div>
+    {% endif %}
+
+    <!-- AI Analysis -->
+    {% if budget.ai_analysis %}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">📊 Spending Analysis</h3>
+        </div>
+        <div class="ai-response">{{ budget.ai_analysis }}</div>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="card">
+        <div class="empty-state">
+            <div class="empty-state-icon">🎯</div>
+            <div class="empty-state-title">No budget plan yet</div>
+            <div class="empty-state-text">Generate a personalized AI-powered budget based on your income and spending habits.</div>
+            <a href="{{ url_for('budget_generate') }}" class="btn btn-primary btn-lg">🤖 Generate AI Budget</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

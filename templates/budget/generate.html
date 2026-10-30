@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Generate Budget{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Generate AI Budget</h1>
+    <p class="page-subtitle">Let AI create a personalized budget based on your financial data</p>
+</div>
+
+<div class="page-body">
+    <div class="card" style="max-width:600px;">
+        <div class="card-header">
+            <h3 class="card-title">🤖 Budget Generation</h3>
+        </div>
+
+        <p class="text-sm text-muted mb-4">
+            Our AI will analyze your current income (${{"%.2f"|format(total_income)}}) and expenses
+            (${{"%.2f"|format(total_expenses)}}) to create an optimized budget plan for this month.
+        </p>
+
+        {% if total_income == 0 %}
+        <div class="alert alert-warning">
+            ⚠️ You haven't recorded any income yet. Please <a href="{{ url_for('income_add') }}">add your income</a> first for a more accurate budget.
+        </div>
+        {% endif %}
+
+        <div style="background: var(--bg-glass); border-radius: var(--radius-md); padding: 20px; margin-bottom: 24px;">
+            <h4 class="text-sm fw-600 mb-4">Financial Summary</h4>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <div>
+                    <div class="text-xs text-muted">Income</div>
+                    <div class="fw-700 amount-positive">${{ "%.2f"|format(total_income) }}</div>
+                </div>
+                <div>
+                    <div class="text-xs text-muted">Expenses</div>
+                    <div class="fw-700 amount-negative">${{ "%.2f"|format(total_expenses) }}</div>
+                </div>
+                <div>
+                    <div class="text-xs text-muted">Savings</div>
+                    <div class="fw-700">${{ "%.2f"|format(total_income - total_expenses) }}</div>
+                </div>
+                <div>
+                    <div class="text-xs text-muted">Categories</div>
+                    <div class="fw-700">{{ category_count }}</div>
+                </div>
+            </div>
+        </div>
+
+        <form method="POST" action="{{ url_for('budget_generate') }}" id="generate-budget-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-primary btn-lg w-full" id="generate-btn">
+                ✨ Generate Personalized Budget
+            </button>
+        </form>
+
+        <p class="text-xs text-muted text-center mt-4">
+            This will analyze your financial data and create a customized budget plan using AI.
+        </p>
+    </div>
+</div>
+{% endblock %}

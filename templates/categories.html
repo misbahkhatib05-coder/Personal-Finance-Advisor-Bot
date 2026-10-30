@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Categories{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Expense Categories</h1>
+    <p class="page-subtitle">Manage your spending categories and budget limits</p>
+</div>
+
+<div class="page-body">
+    <div class="charts-grid">
+        <!-- Category List -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">📂 Your Categories</h3>
+            </div>
+
+            {% if categories_list %}
+            {% for cat in categories_list %}
+            <div class="budget-category-row">
+                <div style="display:flex; align-items:center; gap:12px; flex:1; min-width:0;">
+                    <span style="font-size:1.3rem;">{{ cat.icon }}</span>
+                    <div class="budget-category-info">
+                        <div class="budget-category-name">
+                            <span class="color-dot" style="background:{{ cat.color }}; margin-right:6px;"></span>
+                            {{ cat.name }}
+                        </div>
+                        <div class="budget-category-amounts">
+                            {% if cat.budget_limit > 0 %}
+                            Budget: ${{ "%.2f"|format(cat.budget_limit) }} •
+                            Spent: ${{ "%.2f"|format(cat.get_current_month_total()) }}
+                            {% else %}
+                            No budget limit set
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% if cat.budget_limit > 0 %}
+                <div class="budget-category-bar" style="width:140px;">
+                    {% set pct = (cat.get_current_month_total() / cat.budget_limit * 100) if cat.budget_limit > 0 else 0 %}
+                    <div class="text-xs text-muted text-right">{{ "%.0f"|format(pct) }}%</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill {% if pct > 100 %}over-budget{% endif %}"
+                             style="width:{{ [pct, 100]|min }}%"></div>
+                    </div>
+                </div>
+                {% endif %}
+                <form method="POST" action="{{ url_for('category_delete', id=cat.id) }}" style="display:inline"
+                      onsubmit="return confirm('Delete category &quot;{{ cat.name }}&quot;? All expenses in this category will also be deleted.')">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Delete">✕</button>
+                </form>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">📂</div>
+                <div class="empty-state-title">No categories</div>
+                <div class="empty-state-text">Add a category to start organizing your expenses.</div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Add Category Form -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">➕ Add New Category</h3>
+            </div>
+
+            <form method="POST" action="{{ url_for('categories') }}" id="category-form">
+                {{ form.hidden_tag() }}
+
+                <div class="form-group">
+                    <label class="form-label" for="name">{{ form.name.label.text }}</label>
+                    {{ form.name(class="form-control", id="name") }}
+                    {% for error in form.name.errors %}
+                    <div class="form-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="budget_limit">{{ form.budget_limit.label.text }}</label>
+                    {{ form.budget_limit(class="form-control", id="budget_limit", type="number", step="0.01", min="0") }}
+                    <div class="form-hint">Leave at 0 for no limit.</div>
+                    {% for error in form.budget_limit.errors %}
+                    <div class="form-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="color">{{ form.color.label.text }}</label>
+                    {{ form.color(class="form-control", id="color") }}
+                </div>
+
+                <button type="submit" class="btn btn-primary w-full" id="save-category-btn">
+                    Add Category
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-Powered Personal Finance Advisor — Smart budgeting, expense tracking, and financial recommendations.">
+    <title>{% block title %}Finance Advisor{% endblock %} | FinanceAI</title>
+    <!-- Prevent theme flicker: apply saved theme or default to white/light background immediately -->
+    <script>
+        (function() {
+            var savedTheme = localStorage.getItem('finance_theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    {% if current_user.is_authenticated %}
+    <!-- Sidebar Overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Mobile Sidebar Toggle -->
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="sidebar-brand-icon">💰</div>
+                <div>
+                    <div class="sidebar-brand-text">FinanceAI</div>
+                    <div class="sidebar-brand-sub">Personal Advisor</div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="sidebar-section-title">Overview</div>
+                <a href="{{ url_for('dashboard') }}" class="sidebar-link {% if request.endpoint == 'dashboard' %}active{% endif %}" id="nav-dashboard">
+                    <span class="sidebar-link-icon">📊</span> Dashboard
+                </a>
+
+                <div class="sidebar-section-title">Finances</div>
+                <a href="{{ url_for('income_list') }}" class="sidebar-link {% if request.endpoint in ['income_list', 'income_add'] %}active{% endif %}" id="nav-income">
+                    <span class="sidebar-link-icon">💵</span> Income
+                </a>
+                <a href="{{ url_for('expense_list') }}" class="sidebar-link {% if request.endpoint in ['expense_list', 'expense_add'] %}active{% endif %}" id="nav-expenses">
+                    <span class="sidebar-link-icon">🧾</span> Expenses
+                </a>
+                <a href="{{ url_for('categories') }}" class="sidebar-link {% if request.endpoint == 'categories' %}active{% endif %}" id="nav-categories">
+                    <span class="sidebar-link-icon">📂</span> Categories
+                </a>
+
+                <div class="sidebar-section-title">AI & Planning</div>
+                <a href="{{ url_for('budget_overview') }}" class="sidebar-link {% if request.endpoint in ['budget_overview', 'budget_generate'] %}active{% endif %}" id="nav-budget">
+                    <span class="sidebar-link-icon">🎯</span> Budget Plan
+                </a>
+                <a href="{{ url_for('ai_advisor') }}" class="sidebar-link {% if request.endpoint == 'ai_advisor' %}active{% endif %}" id="nav-advisor">
+                    <span class="sidebar-link-icon">🤖</span> AI Advisor
+                </a>
+
+                <div class="sidebar-section-title">Reports</div>
+                <a href="{{ url_for('monthly_report') }}" class="sidebar-link {% if request.endpoint == 'monthly_report' %}active{% endif %}" id="nav-reports">
+                    <span class="sidebar-link-icon">📈</span> Monthly Report
+                </a>
+
+                <div class="sidebar-section-title">Appearance</div>
+                <div style="padding: 4px 12px 10px;">
+                    <button class="theme-toggle-btn w-full" id="themeToggleBtn" type="button" title="Switch Theme">
+                        <span id="themeToggleIcon">☀️</span>
+                        <span id="themeToggleText">Light Background</span>
+                    </button>
+                </div>
+
+                <div class="sidebar-section-title">Account</div>
+                <a href="{{ url_for('profile') }}" class="sidebar-link {% if request.endpoint == 'profile' %}active{% endif %}" id="nav-profile">
+                    <span class="sidebar-link-icon">👤</span> Profile
+                </a>
+                <a href="{{ url_for('logout') }}" class="sidebar-link" id="nav-logout">
+                    <span class="sidebar-link-icon">🚪</span> Logout
+                </a>
+            </nav>
+
+            <div class="sidebar-user">
+                <div class="sidebar-user-avatar">{{ current_user.name[0] | upper }}</div>
+                <div class="sidebar-user-info">
+                    <div class="sidebar-user-name">{{ current_user.name }}</div>
+                    <div class="sidebar-user-email">{{ current_user.email }}</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="disclaimer-banner">
+                ⚠️ AI-generated financial insights are for informational purposes only. Consult a certified financial advisor for professional advice.
+            </div>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-container">
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" role="alert">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+    {% else %}
+    <!-- Floating Theme Toggle for Login/Register -->
+    <div class="theme-toggle-fixed">
+        <button class="theme-toggle-btn" id="themeToggleAuthBtn" type="button" title="Toggle Theme">
+            <span id="themeToggleAuthIcon">☀️</span>
+            <span id="themeToggleAuthText">Light Background</span>
+        </button>
+    </div>
+
+    <!-- Unauthenticated Layout -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-container" style="position:fixed; top:20px; right:20px; z-index:1000; max-width:400px;">
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}" role="alert">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+    {% block auth_content %}{% endblock %}
+    {% endif %}
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    <script>
+        // Global Theme Toggle Handler
+        function updateThemeControls(theme) {
+            var isLight = theme === 'light';
+            var icon = isLight ? '🌙' : '☀️';
+            var text = isLight ? 'Dark Mode' : 'Light Background';
+
+            var btnIcon = document.getElementById('themeToggleIcon');
+            var btnText = document.getElementById('themeToggleText');
+            if (btnIcon && btnText) {
+                btnIcon.textContent = icon;
+                btnText.textContent = text;
+            }
+
+            var authIcon = document.getElementById('themeToggleAuthIcon');
+            var authText = document.getElementById('themeToggleAuthText');
+            if (authIcon && authText) {
+                authIcon.textContent = icon;
+                authText.textContent = text;
+            }
+        }
+
+        function toggleTheme() {
+            var currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            var newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('finance_theme', newTheme);
+            updateThemeControls(newTheme);
+
+            // Re-render or update charts if available
+            if (window.dispatchEvent) {
+                window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: newTheme } }));
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var initialTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            updateThemeControls(initialTheme);
+
+            var toggleBtn = document.getElementById('themeToggleBtn');
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', toggleTheme);
+            }
+
+            var authToggleBtn = document.getElementById('themeToggleAuthBtn');
+            if (authToggleBtn) {
+                authToggleBtn.addEventListener('click', toggleTheme);
+            }
+        });
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

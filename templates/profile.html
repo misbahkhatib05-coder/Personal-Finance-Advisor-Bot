@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Profile Settings</h1>
+    <p class="page-subtitle">Manage your account and financial preferences</p>
+</div>
+
+<div class="page-body">
+    <div class="card" style="max-width:600px;">
+        <div class="card-header">
+            <h3 class="card-title">👤 Account Information</h3>
+        </div>
+
+        <form method="POST" action="{{ url_for('profile') }}" id="profile-form">
+            {{ form.hidden_tag() }}
+
+            <div class="form-group">
+                <label class="form-label" for="name">{{ form.name.label.text }}</label>
+                {{ form.name(class="form-control", id="name", value=current_user.name) }}
+                {% for error in form.name.errors %}
+                <div class="form-error">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="email">{{ form.email.label.text }}</label>
+                {{ form.email(class="form-control", id="email", value=current_user.email) }}
+                {% for error in form.email.errors %}
+                <div class="form-error">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="monthly_income_target">{{ form.monthly_income_target.label.text }}</label>
+                {{ form.monthly_income_target(class="form-control", id="monthly_income_target", type="number", step="0.01", min="0", value=current_user.monthly_income_target) }}
+                <div class="form-hint">Set a monthly income goal to track against.</div>
+                {% for error in form.monthly_income_target.errors %}
+                <div class="form-error">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="save-profile-btn">
+                Save Changes
+            </button>
+        </form>
+    </div>
+
+    <!-- Account Stats -->
+    <div class="card mt-6" style="max-width:600px;">
+        <div class="card-header">
+            <h3 class="card-title">📊 Account Overview</h3>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div class="report-metric">
+                <div class="report-metric-value">{{ income_count }}</div>
+                <div class="report-metric-label">Income Records</div>
+            </div>
+            <div class="report-metric">
+                <div class="report-metric-value">{{ expense_count }}</div>
+                <div class="report-metric-label">Expense Records</div>
+            </div>
+            <div class="report-metric">
+                <div class="report-metric-value">{{ category_count }}</div>
+                <div class="report-metric-label">Categories</div>
+            </div>
+            <div class="report-metric">
+                <div class="report-metric-value">{{ current_user.created_at.strftime('%b %Y') }}</div>
+                <div class="report-metric-label">Member Since</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

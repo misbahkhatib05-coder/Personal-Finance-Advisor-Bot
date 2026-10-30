@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}AI Financial Advisor{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">AI Financial Advisor</h1>
+    <p class="page-subtitle">Get personalized financial guidance powered by AI</p>
+</div>
+
+<div class="page-body">
+    <!-- Financial Snapshot -->
+    <div class="stats-grid">
+        <div class="stat-card income">
+            <div class="stat-card-icon">💵</div>
+            <div class="stat-card-value">${{ "%.2f"|format(total_income) }}</div>
+            <div class="stat-card-label">Monthly Income</div>
+        </div>
+        <div class="stat-card expenses">
+            <div class="stat-card-icon">🧾</div>
+            <div class="stat-card-value">${{ "%.2f"|format(total_expenses) }}</div>
+            <div class="stat-card-label">Monthly Expenses</div>
+        </div>
+        <div class="stat-card savings">
+            <div class="stat-card-icon">💰</div>
+            <div class="stat-card-value">${{ "%.2f"|format(total_income - total_expenses) }}</div>
+            <div class="stat-card-label">Net Savings</div>
+        </div>
+    </div>
+
+    <!-- Get Advice Button -->
+    {% if not advice %}
+    <div class="card mb-6">
+        <div class="card-header">
+            <h3 class="card-title">🤖 Request AI Financial Advice</h3>
+        </div>
+        <p class="text-sm text-muted mb-4">
+            Our AI will analyze your complete financial profile and provide personalized guidance
+            covering savings strategy, cost optimization, investment basics, and actionable steps.
+        </p>
+
+        {% if total_income == 0 and total_expenses == 0 %}
+        <div class="alert alert-warning">
+            ⚠️ Add some income and expense records first to get meaningful advice.
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('ai_advisor') }}" id="ai-advice-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-primary btn-lg" id="get-advice-btn">
+                ✨ Get Personalized Financial Advice
+            </button>
+        </form>
+    </div>
+    {% endif %}
+
+    <!-- AI Advice Response -->
+    {% if advice %}
+    <div class="card mb-6">
+        <div class="card-header">
+            <h3 class="card-title">💡 Your Personalized Financial Advice</h3>
+        </div>
+        <div class="ai-response">{{ advice }}</div>
+    </div>
+
+    <!-- Get New Advice -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">🔄 Refresh Advice</h3>
+        </div>
+        <p class="text-sm text-muted mb-4">
+            Update your financial data and get fresh AI recommendations.
+        </p>
+        <form method="POST" action="{{ url_for('ai_advisor') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-secondary">Get Updated Advice</button>
+        </form>
+    </div>
+    {% endif %}
+
+    <!-- Spending Analysis -->
+    {% if spending_analysis %}
+    <div class="card mt-6">
+        <div class="card-header">
+            <h3 class="card-title">📊 Spending Analysis</h3>
+        </div>
+        <div class="ai-response">{{ spending_analysis }}</div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
