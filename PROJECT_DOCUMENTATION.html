@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinanceAI — Comprehensive Project Documentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #f8fafc;
+            --bg-sidebar: #ffffff;
+            --bg-card: #ffffff;
+            --bg-accent: #eef2ff;
+            --border: #e2e8f0;
+            --border-hover: #c7d2fe;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --success: #059669;
+            --warning: #d97706;
+            --code-bg: #f1f5f9;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #0b0f19;
+            --bg-sidebar: #111827;
+            --bg-card: #111827;
+            --bg-accent: #1e1b4b;
+            --border: #1f2937;
+            --border-hover: #4f46e5;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --code-bg: #1e293b;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.65;
+            display: flex;
+            min-height: 100vh;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        /* --- Sidebar Navigation --- */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            overflow-y: auto;
+            padding: 24px 18px;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .brand-text h1 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .brand-text p {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .nav-links a {
+            display: block;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.15s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+            background: var(--bg-accent);
+        }
+
+        .theme-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px;
+            background: var(--bg-accent);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 16px;
+            transition: all 0.15s ease;
+        }
+
+        .theme-btn:hover {
+            border-color: var(--primary);
+        }
+
+        /* --- Main Content --- */
+        .content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 40px 60px 80px;
+            max-width: 1080px;
+        }
+
+        .doc-header {
+            margin-bottom: 36px;
+            padding-bottom: 24px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .tag-pill {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            background: var(--bg-accent);
+            color: var(--primary);
+            border: 1px solid var(--border-hover);
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 36px 0 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 20px 0 10px;
+            color: var(--primary);
+        }
+
+        p, li {
+            font-size: 14.5px;
+            color: var(--text-main);
+            margin-bottom: 12px;
+        }
+
+        ul, ol {
+            padding-left: 24px;
+            margin-bottom: 16px;
+        }
+
+        /* --- Tables --- */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0 28px;
+            font-size: 13.5px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        th, td {
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg-accent);
+            font-weight: 700;
+            color: var(--text-main);
+            font-size: 12.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* --- Callout Cards --- */
+        .card-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px 24px;
+            margin: 20px 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-box.info {
+            border-left: 4px solid var(--primary);
+            background: var(--bg-accent);
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--code-bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12.5px;
+            color: var(--primary);
+        }
+
+        pre {
+            background: var(--code-bg);
+            padding: 16px 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            margin: 16px 0;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: var(--text-main);
+            font-size: 12.5px;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                display: none;
+            }
+            .content {
+                margin-left: 0;
+                padding: 24px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">💰</div>
+            <div class="brand-text">
+                <h1>FinanceAI</h1>
+                <p>Technical Docs v1.0</p>
+            </div>
+        </div>
+
+        <ul class="nav-links">
+            <li><a href="#summary">1. Executive Summary</a></li>
+            <li><a href="#problem">2. Problem & Solution</a></li>
+            <li><a href="#stack">3. Technology Stack</a></li>
+            <li><a href="#architecture">4. Architecture Structure</a></li>
+            <li><a href="#database">5. Database Models & Schema</a></li>
+            <li><a href="#modules">6. Core Functional Modules</a></li>
+            <li><a href="#themes">7. Dual-Theme Design</a></li>
+            <li><a href="#ai">8. Generative AI Engine</a></li>
+            <li><a href="#routes">9. API Route Map</a></li>
+            <li><a href="#security">10. Security Framework</a></li>
+            <li><a href="#tests">11. Test Verification</a></li>
+            <li><a href="#install">12. Installation Guide</a></li>
+        </ul>
+
+        <button class="theme-btn" id="themeBtn">
+            <span id="themeIcon">🌙</span> <span id="themeText">Dark Mode</span>
+        </button>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="content">
+
+        <header class="doc-header">
+            <span class="tag-pill">Official Documentation</span>
+            <h1>Personal Finance Advisor Bot (FinanceAI)</h1>
+            <p style="color:var(--text-muted); font-size:15px;">Full-Stack AI Financial Planning, Cash Flow Intelligence, and Interactive Wealth Analytics</p>
+        </header>
+
+        <!-- Section 1 -->
+        <section id="summary">
+            <h2>1. Executive Summary</h2>
+            <p>The <strong>Personal Finance Advisor Bot</strong> is a full-stack, enterprise-ready personal finance platform designed to instill financial discipline through intelligent budgeting, automated expense tracking, spending leak detection, and AI financial recommendations.</p>
+            <p>Engineered using Python, Flask, SQLAlchemy ORM, SQLite, Chart.js, and Google Gemini AI, the system couples mathematical financial modeling (50/30/20 principle) with natural language generative intelligence.</p>
+        </section>
+
+        <!-- Section 2 -->
+        <section id="problem">
+            <h2>2. Problem Statement & Solution</h2>
+            <div class="card-box info">
+                <p><strong>The Core Problem:</strong> Consumers manage multiple cards, subscriptions, and unpredictable expenses. Static spreadsheets lack real-time visual feedback and require manual formula upkeep, leading to abandoned financial plans and zero emergency preparedness.</p>
+            </div>
+            <p><strong>FinanceAI Solution:</strong></p>
+            <ul>
+                <li><strong>Automated AI Budgets:</strong> Derives realistic category allowances based on income and historical outlays.</li>
+                <li><strong>Interactive Visualization:</strong> 4 Chart.js charts translating raw numbers into intuitive trajectories.</li>
+                <li><strong>Adaptive UX:</strong> Clean White Canvas by default with 1-click Dark Glassmorphism switching.</li>
+                <li><strong>Autonomous Fallback:</strong> Seamless deterministic rules if API keys are absent or offline.</li>
+            </ul>
+        </section>
+
+        <!-- Section 3 -->
+        <section id="stack">
+            <h2>3. Technology Stack</h2>
+            <table>
+                <thead>
+                    <tr><th>Layer</th><th>Technology</th><th>Purpose</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Backend Framework</strong></td><td>Flask 3.1.x</td><td>Core micro-framework & 15 route handlers</td></tr>
+                    <tr><td><strong>Authentication</strong></td><td>Flask-Login 0.6.x</td><td>Session management, user loader, route protection</td></tr>
+                    <tr><td><strong>Security & Forms</strong></td><td>Flask-WTF / WTForms</td><td>Form validation, sanitization, CSRF tokens</td></tr>
+                    <tr><td><strong>Database & ORM</strong></td><td>SQLAlchemy 3.1.x</td><td>Relational mapping & SQLite abstraction</td></tr>
+                    <tr><td><strong>Generative AI</strong></td><td>Google Gemini AI SDK</td><td>Personalized budget synthesis & financial advice</td></tr>
+                    <tr><td><strong>Data Visualization</strong></td><td>Chart.js 4.4.x</td><td>Interactive dual-bar, doughnut, line, and bar charts</td></tr>
+                    <tr><td><strong>Design System</strong></td><td>Pure Vanilla CSS3</td><td>Custom design tokens, responsive layout, glassmorphism</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section 4 -->
+        <section id="architecture">
+            <h2>4. Architecture & Directory Structure</h2>
+            <pre><code>c:\Users\Misba\OneDrive\Desktop\Antigravity/
+├── app.py                 # Core application factory & 15 route endpoints
+├── models.py              # 6 SQLAlchemy models & 10 seeded categories
+├── forms.py               # Flask-WTF forms with validation rules
+├── ai_engine.py           # Gemini AI integration & heuristic fallback
+├── generate_pdf.py        # Executive presentation PDF generator
+├── run_finance.bat        # 1-Click Windows launcher (Port 5000)
+├── upload_to_github.bat   # 1-Click GitHub repository uploader
+├── requirements.txt       # Python dependencies
+├── static/
+│   ├── css/style.css      # Dual-theme design tokens & styling
+│   └── js/dashboard.js    # Chart.js initialization & theme listeners
+└── templates/             # Jinja2 HTML templates</code></pre>
+        </section>
+
+        <!-- Section 5 -->
+        <section id="database">
+            <h2>5. Database Schema (6 Relational Models)</h2>
+            <table>
+                <thead>
+                    <tr><th>Model</th><th>Key Fields</th><th>Relationships</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>User</code></td><td>id, email, password_hash, name, monthly_income_target</td><td>Parent; 1-to-many with Income, Expense, Budget, Report</td></tr>
+                    <tr><td><code>Income</code></td><td>id, user_id, source, amount, date, is_recurring</td><td>Child of User; tracks salary, freelance, investments</td></tr>
+                    <tr><td><code>ExpenseCategory</code></td><td>id, user_id, name, icon, budget_limit, color</td><td>Child of User; 10 seeded defaults + custom categories</td></tr>
+                    <tr><td><code>Expense</code></td><td>id, user_id, category_id, amount, date, payment_method</td><td>Child of User & Category; itemized cash outflows</td></tr>
+                    <tr><td><code>Budget</code></td><td>id, user_id, month, year, total_budget, categories_json</td><td>Stores AI-generated category allocations & advice</td></tr>
+                    <tr><td><code>MonthlyReport</code></td><td>id, user_id, month, year, total_income, savings, ai_insights</td><td>Monthly financial snapshot for historical auditing</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section 6 -->
+        <section id="modules">
+            <h2>6. Core Functional Modules</h2>
+            <h3>6.1 Authentication & Security</h3>
+            <p>Passwords are securely hashed using Werkzeug's salted PBKDF2 SHA-256 algorithm. Unauthenticated requests are redirected with warning flashes. Every form includes CSRF validation.</p>
+
+            <h3>6.2 Cash Flow Ledger</h3>
+            <p>Users can log income and expenses with customizable tags, recurring flags, and payment methods (Credit Card, Debit, UPI, Cash).</p>
+
+            <h3>6.3 Analytics Dashboard</h3>
+            <p>Features 4 high-level KPI cards and 4 interactive Chart.js charts: 6-month Income vs. Expense dual bar chart, category doughnut chart, savings trend line chart, and horizontal budget progress meters.</p>
+        </section>
+
+        <!-- Section 7 -->
+        <section id="themes">
+            <h2>7. Adaptive Dual-Theme System</h2>
+            <div class="card-box">
+                <p><strong>Clean White Background (Default):</strong> Designed for high readability using slate typography (<code>#0f172a</code>) on an ultra-light canvas (<code>#f8fafc</code>) with subtle elevation shadows.</p>
+                <p><strong>Dark Glassmorphism:</strong> Deep navy canvas (<code>#0a0e1a</code>) with frosted translucent glass cards (<code>backdrop-filter: blur(20px)</code>) and glowing visual accents.</p>
+                <p><strong>Instant Toggle:</strong> The sidebar toggle switches themes with zero flicker by synchronizing with <code>localStorage</code>.</p>
+            </div>
+        </section>
+
+        <!-- Section 8 -->
+        <section id="ai">
+            <h2>8. Generative AI Financial Engine</h2>
+            <p>The AI Engine operates through two robust modes:</p>
+            <ul>
+                <li><strong>Google Gemini AI:</strong> Synthesizes verified financial data into personalized category caps, emergency fund guidance, and spending leak audits.</li>
+                <li><strong>Deterministic 50/30/20 Fallback:</strong> Automatically takes over if API keys are absent, calculating allocations (50% Needs, 30% Wants, 20% Savings) and a mathematical Financial Health Score.</li>
+            </ul>
+        </section>
+
+        <!-- Section 9 -->
+        <section id="tests">
+            <h2>9. Test Suite & Verification Results</h2>
+            <table>
+                <thead>
+                    <tr><th>#</th><th>Test Scenario</th><th>Verification Criteria</th><th>Result</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>Registration Flow</td><td>Unique email, password confirmation, 10 categories seeded</td><td style="color:var(--success); font-weight:700;">PASSED (200 OK)</td></tr>
+                    <tr><td>2</td><td>Authentication Flow</td><td>Password validation, session creation, dashboard redirect</td><td style="color:var(--success); font-weight:700;">PASSED (200 OK)</td></tr>
+                    <tr><td>3</td><td>Income Tracking</td><td>Positive amount check, recurring flag persistence</td><td style="color:var(--success); font-weight:700;">PASSED (200 OK)</td></tr>
+                    <tr><td>4</td><td>Expense Tracking</td><td>Category FK mapping, payment method assignment</td><td style="color:var(--success); font-weight:700;">PASSED (200 OK)</td></tr>
+                    <tr><td>5</td><td>Dashboard Calculations</td><td>KPI metric verification, Chart.js dataset generation</td><td style="color:var(--success); font-weight:700;">PASSED (200 OK)</td></tr>
+                    <tr><td>6</td><td>Category Management</td><td>Custom category addition, color picker storage</td><td style="color:var(--success); font-weight:700;">PASSED (200 OK)</td></tr>
+                    <tr><td>7</td><td>AI Budget Generation</td><td>Savings target input, category cap calculation</td><td style="color:var(--success); font-weight:700;">PASSED (200 OK)</td></tr>
+                    <tr><td>8</td><td>AI Financial Advisor</td><td>Health score generation, spending analysis tips</td><td style="color:var(--success); font-weight:700;">PASSED (200 OK)</td></tr>
+                    <tr><td>9</td><td>Monthly Report</td><td>Monthly aggregation, income source breakdown</td><td style="color:var(--success); font-weight:700;">PASSED (200 OK)</td></tr>
+                    <tr><td>10</td><td>Profile Updates</td><td>Name, email, and income target persistence</td><td style="color:var(--success); font-weight:700;">PASSED (200 OK)</td></tr>
+                    <tr><td>11</td><td>Logout Teardown</td><td>Session cookie invalidation & route protection</td><td style="color:var(--success); font-weight:700;">PASSED (200 OK)</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section 10 -->
+        <section id="install">
+            <h2>10. Installation & Quick Start</h2>
+            <pre><code># 1. Install dependencies
+pip install -r requirements.txt
+
+# 2. Run the application
+python app.py
+
+# 3. Open in browser:
+http://127.0.0.1:5000</code></pre>
+            <p>Or simply double-click <code>run_finance.bat</code> in the project directory.</p>
+        </section>
+
+    </main>
+
+    <script>
+        const themeBtn = document.getElementById('themeBtn');
+        const themeIcon = document.getElementById('themeIcon');
+        const themeText = document.getElementById('themeText');
+
+        themeBtn.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', nextTheme);
+            themeIcon.textContent = nextTheme === 'light' ? '🌙' : '☀️';
+            themeText.textContent = nextTheme === 'light' ? 'Dark Mode' : 'Light Mode';
+        });
+    </script>
+</body>
+</html>
